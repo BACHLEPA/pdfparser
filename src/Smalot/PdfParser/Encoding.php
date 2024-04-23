@@ -36,6 +36,7 @@ use Smalot\PdfParser\Element\ElementNumeric;
 use Smalot\PdfParser\Encoding\EncodingLocator;
 use Smalot\PdfParser\Encoding\PostScriptGlyphs;
 use Smalot\PdfParser\Exception\EncodingNotFoundException;
+use Smalot\PdfParser\Encoding\AbstractEncoding;
 
 /**
  * Class Encoding
@@ -64,7 +65,10 @@ class Encoding extends PDFObject
         $this->encoding = [];
 
         if ($this->has('BaseEncoding')) {
-            $this->encoding = EncodingLocator::getEncoding($this->getEncodingClass())->getTranslations();
+            $this->encoding = EncodingLocator::getEncoding($this->getEncodingClass());
+            if ($this->encoding instanceof AbstractEncoding) {
+                $this->encoding = $this->encoding->getTranslations();
+            }
 
             // Build table including differences.
             $differences = $this->get('Differences')->getContent();
